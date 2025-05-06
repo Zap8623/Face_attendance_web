@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trạng Thái Điểm Danh - Hệ Thống Quản Lý Điểm Danh</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background-color: #2c3e50;
+            padding: 1rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .navbar a {
+            color: #ecf0f1;
+            text-decoration: none;
+            margin-right: 1.5rem;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+        .navbar a:hover {
+            color: #3498db;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #3498db;
+            color: #fff;
+            font-size: 1.1rem;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        tr:hover {
+            background-color: #e0f7fa;
+            transition: background-color 0.3s ease;
+        }
+        img {
+            max-width: 100px;
+            border-radius: 4px;
+            display: block; /* Đảm bảo hình ảnh hiển thị đúng */
+        }
+        .no-image {
+            color: #e74c3c;
+            text-align: center;
+            display: block;
+        }
+        .error {
+            color: #e74c3c;
+            text-align: center;
+            margin-bottom: 1rem;
+            background-color: #fdecea;
+            padding: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="{{ url_for('home') }}">Trang Chủ</a>
+        <a href="{{ url_for('manage_schedule') }}">Quản Lý Lịch Học</a>
+        <a href="{{ url_for('manage_attendance_window') }}">Quản Lý Khung Thời Gian Điểm Danh</a>
+        <a href="{{ url_for('manage_documents') }}">Quản Lý Tài Liệu</a>
+        <a href="{{ url_for('status') }}">Trạng Thái Điểm Danh</a>
+        <a href="{{ url_for('report') }}">Báo Cáo</a>
+        <a href="{{ url_for('logout') }}" style="float: right;">Đăng Xuất</a>
+    </div>
+    <div class="container">
+        <h2>Trạng Thái Điểm Danh Hôm Nay</h2>
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+        <table>
+            <tr>
+                <th>Tên</th>
+                <th>Lớp</th>
+                <th>Trạng Thái</th>
+                <th>Thời Gian</th>
+                <th>Đúng Giờ</th>
+                <th>Ảnh</th>
+            </tr>
+            {% for status in status_list %}
+            <tr>
+                <td>{{ status.name }}</td>
+                <td>{{ status.class }}</td>
+                <td>{{ status.status }}</td>
+                <td>{{ status.time }}</td>
+                <td>{{ status.on_time }}</td>
+                <td>
+                    {% if status.image_path %}
+                        <img src="/{{ status.image_path }}" alt="Attendance Image">
+                    {% else %}
+                        <span class="no-image">Không có ảnh</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html>

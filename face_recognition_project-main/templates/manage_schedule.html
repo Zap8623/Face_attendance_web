@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Lịch Học - Hệ Thống Quản Lý Điểm Danh</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background-color: #2c3e50;
+            padding: 1rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .navbar a {
+            color: #ecf0f1;
+            text-decoration: none;
+            margin-right: 1.5rem;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+        .navbar a:hover {
+            color: #3498db;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        select, input[type="text"], input[type="time"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        button {
+            padding: 0.75rem;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #3498db;
+            color: #fff;
+            font-size: 1.1rem;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        tr:hover {
+            background-color: #e0f7fa;
+            transition: background-color 0.3s ease;
+        }
+        .error {
+            color: #e74c3c;
+            text-align: center;
+            margin-bottom: 1rem;
+            background-color: #fdecea;
+            padding: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="{{ url_for('home') }}">Trang Chủ</a>
+        <a href="{{ url_for('manage_schedule') }}">Quản Lý Lịch Học</a>
+        <a href="{{ url_for('manage_attendance_window') }}">Quản Lý Khung Thời Gian Điểm Danh</a>
+        <a href="{{ url_for('manage_documents') }}">Quản Lý Tài Liệu</a>
+        <a href="{{ url_for('status') }}">Trạng Thái Điểm Danh</a>
+        <a href="{{ url_for('report') }}">Báo Cáo</a>
+        <a href="{{ url_for('logout') }}" style="float: right;">Đăng Xuất</a>
+    </div>
+    <div class="container">
+        <h2>Quản Lý Lịch Học</h2>
+        <form method="POST" action="{{ url_for('manage_schedule') }}">
+            <div class="form-group">
+                <label for="class_id">Lớp Học:</label>
+                <select id="class_id" name="class_id" required>
+                    {% for class in classes %}
+                    <option value="{{ class.id }}">{{ class.class_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="subject">Môn Học:</label>
+                <input type="text" id="subject" name="subject" required>
+            </div>
+            <div class="form-group">
+                <label for="day_of_week">Ngày Trong Tuần:</label>
+                <select id="day_of_week" name="day_of_week" required>
+                    <option value="Thứ Hai">Thứ Hai</option>
+                    <option value="Thứ Ba">Thứ Ba</option>
+                    <option value="Thứ Tư">Thứ Tư</option>
+                    <option value="Thứ Năm">Thứ Năm</option>
+                    <option value="Thứ Sáu">Thứ Sáu</option>
+                    <option value="Thứ Bảy">Thứ Bảy</option>
+                    <option value="Chủ Nhật">Chủ Nhật</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="start_time">Thời Gian Bắt Đầu:</label>
+                <input type="time" id="start_time" name="start_time" required>
+            </div>
+            <div class="form-group">
+                <label for="end_time">Thời Gian Kết Thúc:</label>
+                <input type="time" id="end_time" name="end_time" required>
+            </div>
+            <button type="submit">Thêm Lịch Học</button>
+        </form>
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+        <h2>Lịch Học Đã Thiết Lập</h2>
+        <table>
+            <tr>
+                <th>Lớp</th>
+                <th>Môn Học</th>
+                <th>Ngày Trong Tuần</th>
+                <th>Thời Gian Bắt Đầu</th>
+                <th>Thời Gian Kết Thúc</th>
+            </tr>
+            {% for schedule in schedules %}
+            <tr>
+                <td>{{ schedule.class_name }}</td>
+                <td>{{ schedule.subject }}</td>
+                <td>{{ schedule.day_of_week }}</td>
+                <td>{{ schedule.start_time }}</td>
+                <td>{{ schedule.end_time }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html>
